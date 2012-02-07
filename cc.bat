@@ -22,7 +22,7 @@ if errorlevel 1 goto exit
 srec_cat -Disable_Sequence_Warnings tc70cmB.ihx -intel -random-fill 0x0 0x4000 -exclude 0x26 0x28 -l-e-checksum-neg 0x26 2 2 -o tc70cmB-V%VERSION%.bin -binary
 
 rem eps1001 cannot cope with logn filenames
-copy /y tc4m-V%VERSION%.bin tmp.bin
-eps1001.exe tmp.bin T27128 BIN COM1 R+
+rem copy /y tc4m-V%VERSION%.bin tmp.bin
+rem eps1001.exe tmp.bin T27128 BIN COM1 R+
 
 :exit
