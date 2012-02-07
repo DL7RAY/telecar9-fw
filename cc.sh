@@ -2,12 +2,20 @@
 #
 # Linux version of the tc9 compilation script
 # To make this script executable, type "chmod ugo+x cc.sh" after the prompt
-# Run it with ./cc.sh
+# Run it with ./cc.sh after the prompt
+# It requires to have Small Devices C Compiler (SDCC) package installed
+# as well as SRecord to manage the EEPROM file content
+# If these packages are missing on your Debian/Ubuntu system:
+# sudo apt-get install sdcc
+# sudo apt-get install sdcc-librairies
+# sudo apt-get install srecord
+# HB9DTX / February 2012
 
-
-VERSION=15					# Please set the version of the firmware to the wanted one
+VERSION=15					 # Please set the version of the firmware to the wanted one
 clear_interm_files=1 #0: keeps all the generated files; 1: keeps only the final binaries
-set -e							# exit script on error
+
+
+set -e							 # exit script on error
 
 sdcc -DTC4M -DVERSION=$VERSION tc9main.c -o tc4m.ihx --code-size 0x4000 --no-xinit-opt --xram-loc 0x8000
 srec_cat -Disable_Sequence_Warnings tc4m.ihx -intel -random-fill 0x0 0x4000 -exclude 0x26 0x28 -l-e-checksum-neg 0x26 2 2 -o tc4m-V$VERSION.bin -binary
