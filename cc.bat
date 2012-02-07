@@ -1,3 +1,4 @@
+rem DOS/Windows version of the tc9 compilation script
 rem echo off
 set VERSION=15
 
@@ -21,7 +22,9 @@ sdcc -DTC70CM -DBUFU -DVERSION=%VERSION% tc9main.c -o tc70cmB.ihx --code-size 0x
 if errorlevel 1 goto exit
 srec_cat -Disable_Sequence_Warnings tc70cmB.ihx -intel -random-fill 0x0 0x4000 -exclude 0x26 0x28 -l-e-checksum-neg 0x26 2 2 -o tc70cmB-V%VERSION%.bin -binary
 
-rem eps1001 cannot cope with logn filenames
+rem The following lines are usefull to start an EPROM emulator. Must be commented it no EPROM emulator available
+
+rem eps1001 cannot cope with long filenames
 rem copy /y tc4m-V%VERSION%.bin tmp.bin
 rem eps1001.exe tmp.bin T27128 BIN COM1 R+
 

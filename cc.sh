@@ -1,5 +1,6 @@
 #!/bin/bash -x
 #
+# Linux version of the tc9 compilation script
 # To make this script executable, type "chmod ugo+x cc.sh" after the prompt
 # Run it with ./cc.sh
 
