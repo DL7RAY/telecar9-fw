@@ -32,6 +32,15 @@ srec_cat -Disable_Sequence_Warnings tc2mB.ihx -intel -random-fill 0x0 0x4000 -ex
 sdcc -DTC70CM -DBUFU -DVERSION=$VERSION tc9main.c -o tc70cmB.ihx --code-size 0x4000 --no-xinit-opt --xram-loc 0x8000
 srec_cat -Disable_Sequence_Warnings tc70cmB.ihx -intel -random-fill 0x0 0x4000 -exclude 0x26 0x28 -l-e-checksum-neg 0x26 2 2 -o tc70cmB-V$VERSION.bin -binary
 
+
+cat tc4m-V$VERSION.bin tc4m-V$VERSION.bin > tc4m-V${VERSION}_double.bin
+cat tc2m-V$VERSION.bin tc2m-V$VERSION.bin > tc2m-V${VERSION}_double.bin
+cat tc70cm-V$VERSION.bin tc70cm-V$VERSION.bin > tc70cm-V${VERSION}_double.bin
+cat tc2mB-V$VERSION.bin tc2mB-V$VERSION.bin > tc2mB-V${VERSION}_double.bin
+cat tc70cmB-V$VERSION.bin tc70cmB-V$VERSION.bin > tc70cmB-V${VERSION}_double.bin
+
+
+
 mv *.bin bin/
 if [ $clear_interm_files == 1 ];then
 rm *.ihx
