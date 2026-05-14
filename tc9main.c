@@ -17,23 +17,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     The author may be contacted by eMail: tc9@dl1fac.de
-    
+
     Feel free to add your extensions, but don't expect any support until
     I am retired :-) You will definitely need the schematics to understand
     the code, but it's quite straightforward then.
-    
+
     To compile the code, you need the free sdcc compiler available at sourceforge.
     I was using sdcc version 2.8.0 from 2008 all the time.
-    
+
     Example command line for the 2m version:
-    
+
     set VERSION=15
     sdcc -DTC2M -DVERSION=%VERSION% tc9main.c -o tc2m.ihx --code-size 0x4000 --no-xinit-opt --xram-loc 0x8000
     srec_cat -Disable_Sequence_Warnings tc2m.ihx -intel -random-fill 0x0 0x4000 -exclude 0x26 0x28 -l-e-checksum-neg 0x26 2 2 -o tc2m-V%VERSION%.bin -binary
-    
-    A great Thank You to Yves Oesch and Thomas Müser for their continuous support of this project
+
+    A great Thank You to Yves Oesch and Thomas MÃ¼ser for their continuous support of this project
     (testing, documentation, discussions and deliviering the firmware to several fist time users).
-    
+
     Wulf-Gerd, DL1FAC, DOK Eutin M02, JO54hd
 
     Version 1.5
@@ -119,7 +119,7 @@ enum {
 
 
 
-// Trunk net (german "Bündelfunk") version with full clock 8.4672 MHz from coproc and 27C256
+// Trunk net (german "BÃ¼ndelfunk") version with full clock 8.4672 MHz from coproc and 27C256
 // otherwise half clock 4.2336 MHz and 27C128/27C64 (two zero ohm resistors under control board)
 // #define BUFU
 
@@ -2109,8 +2109,8 @@ restartC:
                              set_synth (vfo_rx);
                              wait_for_rx_lock ();
                              rx_vfo_to_display ();
-               	           RSAZ = 1;
-                	           // open audio independent of squelch state
+                             RSAZ = 1;
+                             // open audio independent of squelch state
                              coproc_out (2, 0x89 | ((7-volume) << 4)); // MIK off
                              rsplast = 0;
                              // wait until key released again
@@ -2163,8 +2163,8 @@ restartC:
                              set_synth (vfo_rx);
                              wait_for_rx_lock ();
                              rx_vfo_to_display ();
-               	           RSAZ = 1;
-                	           // open audio independent of squelch state
+                             RSAZ = 1;
+                             // open audio independent of squelch state
                              coproc_out (2, 0x89 | ((7-volume) << 4)); // MIK off
                              rsplast = 0;
                              // wait until key released again
@@ -2283,56 +2283,56 @@ restartC:
         if (RI)
         {
             RI=0;
-	         copro_inp=SBUF;
-	         rb8 = RB8;
-	         if (!rb8)
-	         {
-                // print_hex (copro_inp); // TEST
-                /*  copro_inp values:
-	                 bit 7 AFSK signal
-	                 bit 6 IGN  high = ignition on
-	                 bit 5 EINT/ high if mike switch in position off (parallel to EIN button on front)
-	                 bit 4 NOT/  low = emergency alert
-	                 bit 3 RUTA/ low = left button "note" pressed
-	                 bit 2 SPTA/ low = PTT pressed
-	                 bit 1 GAKO/ low = handset operation
-	                 bit 0 LSPT/ low = right button "speaker" pressed
-                */
+                copro_inp=SBUF;
+                rb8 = RB8;
+                if (!rb8)
+                {
+                    // print_hex (copro_inp); // TEST
+                    /*  copro_inp values:
+                        bit 7 AFSK signal
+                        bit 6 IGN  high = ignition on
+                        bit 5 EINT/ high if mike switch in position off (parallel to EIN button on front)
+                        bit 4 NOT/  low = emergency alert
+                        bit 3 RUTA/ low = left button "note" pressed
+                        bit 2 SPTA/ low = PTT pressed
+                        bit 1 GAKO/ low = handset operation
+                        bit 0 LSPT/ low = right button "speaker" pressed
+                    */
 
-                // if external mike with permanent on switch like ML79 is connected
-                // GAKO/ must be pulled low permanently
-                // With simple mikes (using on/off button on front panel) GAKO must
-                // be left open to prevent from shutting down power with every PTT action
-                if (copro_inp & C_EINT && !(copro_inp & C_GAKO))
-                {
-                    // mike switch in position off
-                    switch_off (1); // does not return
-                }
-                if (!(copro_inp & C_EINT) && (copro_inp & C_GAKO))
-                {
-                    // normal mike without switch, but front panel button pressed
-                    while (!RI); // wait for button release event
-                    RI = 0;
-                    delay5ms ();
-                    switch_off (1); // does not return
-                }
+                    // if external mike with permanent on switch like ML79 is connected
+                    // GAKO/ must be pulled low permanently
+                    // With simple mikes (using on/off button on front panel) GAKO must
+                    // be left open to prevent from shutting down power with every PTT action
+                    if (copro_inp & C_EINT && !(copro_inp & C_GAKO))
+                    {
+                        // mike switch in position off
+                        switch_off (1); // does not return
+                    }
+                    if (!(copro_inp & C_EINT) && (copro_inp & C_GAKO))
+                    {
+                        // normal mike without switch, but front panel button pressed
+                        while (!RI); // wait for button release event
+                        RI = 0;
+                        delay5ms ();
+                        switch_off (1); // does not return
+                    }
 
-                if (!tone && !transmitting) tone = !(copro_inp & C_RUTA);
-                aprs_tx = !(copro_inp & C_NOT);
-	             newtrans = !(copro_inp & C_SPTA) || tone || aprs_tx;
-                if (!transmitting && newtrans && !txallowed)
-                {
-                    // transmission outside band limits prohibited
-                    newtrans = 0;
-                    // switch on ATONE
-                    delay5ms ();
-                    coproc_out (2, 0x83 | ((7-volume) << 4)); // MIK off, NF off, ATONE on
-                    for (tmp=1; tmp!=40; tmp++) delay5ms (); // about 0.2s tone
-                    back_to_rx = 1;
-                }
-//	             if (newtrans != transmitting)
-//	             {
-	                 transmitting = newtrans; // state changed
+                    if (!tone && !transmitting) tone = !(copro_inp & C_RUTA);
+                    aprs_tx = !(copro_inp & C_NOT);
+                    newtrans = !(copro_inp & C_SPTA) || tone || aprs_tx;
+                    if (!transmitting && newtrans && !txallowed)
+                    {
+                        // transmission outside band limits prohibited
+                        newtrans = 0;
+                        // switch on ATONE
+                        delay5ms ();
+                        coproc_out (2, 0x83 | ((7-volume) << 4)); // MIK off, NF off, ATONE on
+                        for (tmp=1; tmp!=40; tmp++) delay5ms (); // about 0.2s tone
+                        back_to_rx = 1;
+                    }
+//                    if (newtrans != transmitting)
+//                    {
+                    transmitting = newtrans; // state changed
                     if (transmitting)
                     {
                         if (tone)
@@ -2424,31 +2424,31 @@ txfail:
                     monitor = !(copro_inp & C_LSPT);
                 }
             }
-	     }
+        }
 
         if (!transmitting)
         {
             /* Squelch handling */
             /* rsp = (RSP && !monitor); did not work this way... */
             if (monitor) rsp = 0; else rsp = RSP;
-    	      if ((rsp != rsplast) || back_to_rx)
-    	      {
-    	         back_to_rx = 0;
-    	         // squelch status changed
-    	         rsplast = rsp;
-    	         if (rsp)
-    	         {
-    	             // switch off AF and red RSAZ LED
-    	             RSAZ = 0;
-                   coproc_out (2, 0x8B | ((7-volume) << 4)); // MIK off
-    	         }
-    	         else
-    	         {
-    	             // switch on AF and red RSAZ LED
-    	             RSAZ = 1;
-                   coproc_out (2, 0x89 | ((7-volume) << 4)); // MIK off
-    	         }
-    	      }
-    	  }
+            if ((rsp != rsplast) || back_to_rx)
+            {
+                back_to_rx = 0;
+                // squelch status changed
+                rsplast = rsp;
+                if (rsp)
+                {
+                    // switch off AF and red RSAZ LED
+                    RSAZ = 0;
+                    coproc_out (2, 0x8B | ((7-volume) << 4)); // MIK off
+                }
+                else
+                {
+                    // switch on AF and red RSAZ LED
+                    RSAZ = 1;
+                    coproc_out (2, 0x89 | ((7-volume) << 4)); // MIK off
+                }
+            }
+        }
     }
 }
